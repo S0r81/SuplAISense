@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card-wrapper">
+  <div class="card">
+    <h1 class="center">Uploaded Files</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>View</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for file in files %}
+        <tr>
+          <td>{{ file.filename }}</td>
+          <td><button onclick="viewPDF('{{ url_for('download_file', file_id=file._id) }}')">View</button></td>
+          <td><a href="{{ url_for('download_file', file_id=file._id) }}">Download</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Include the PDF.js library -->
+<script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+
+<script>
+function viewPDF(url) {
+  // Get the container element
+  var container = document.getElementById('pdf-container');
+
+  // Remove any existing PDF viewer
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
+
+  // Create a new canvas element to render the PDF
+  var canvas = document.createElement('canvas');
+  container.appendChild(canvas);
+
+  // Set the canvas dimensions to fit the container
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+
+  // Load the PDF document
+  pdfjsLib.getDocument(url).promise.then(function(pdf) {
+    // Get the first page of the PDF
+    return pdf.getPage(1);
+  }).then(function(page) {
+    // Get the viewport size for the canvas
+    var viewport = page.getViewport({scale: 1});
+
+    // Set the canvas dimensions to match the page dimensions
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    // Render the page to the canvas
+    var context = canvas.getContext('2d');
+    var renderContext = {
+      canvasContext: context,
+      viewport: viewport
+    };
+    page.render(renderContext);
+  });
+}
+</script>
+
+<!-- Add a container for the PDF viewer -->
+<div id="pdf-container"></div>
+{% endblock %}

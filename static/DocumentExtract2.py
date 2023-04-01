@@ -1,9 +1,10 @@
 import pdfplumber
 import openai
 import re
-
-# Replace this with your OpenAI API key
-openai.api_key = "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"
+def main():
+    # modify this to extract bson binary of the pdf, seller name, buyer name, address, description, quantity and date and return these in an array
+    # Replace this with your OpenAI API key
+    openai.api_key = "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"
 
 def extract_text_from_pdf(file_path):
     with pdfplumber.open(file_path) as pdf:
