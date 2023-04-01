@@ -6,6 +6,7 @@ from faker import Faker
 import os
 import random
 
+
 def generate_dates(fake):
     date_formats = [
         "%m/%d/%Y",
@@ -20,29 +21,27 @@ def generate_dates(fake):
         "%d-%m-%y"
     ]
 
-    return [fake.date_time_between(start_date='-5y', end_date='now').strftime(date_format) for date_format in date_formats]
+    return [fake.date_time_between(start_date='-5y', end_date='now').strftime(date_format) for date_format in
+            date_formats]
 
-def generate_invoice_items(fake, num_items=5):
-    construction_items = [
-        "Excavation",
-        "Concrete",
-        "Roofing",
-        "Framing",
-        "Electrical",
-        "Plumbing",
-        "Insulation",
-        "Drywall",
-        "Painting",
-        "Flooring",
-        "Carpentry",
-        "Windows & Doors",
-        "HVAC",
-        "Landscaping"
+
+def generate_invoice_items(num_items=5):
+    lumber_items = [
+        "Softwood Lumber",
+        "Hardwood Lumber",
+        "Plywood",
+        "OSB",
+        "Particle Board",
+        "MDF",
+        "Dimensional Lumber",
+        "Engineered Wood",
+        "Wooden Beams",
+        "Wooden Poles"
     ]
 
     items = []
     for _ in range(num_items):
-        description = random.choice(construction_items)
+        description = random.choice(lumber_items)
         quantity = random.randint(1, 10)
         price = round(random.uniform(50, 500), 2)
         subtotal = round(quantity * price, 2)
@@ -50,19 +49,27 @@ def generate_invoice_items(fake, num_items=5):
 
     return items
 
+
 def generate_invoice(fake, date, i, j, template):
-    items = generate_invoice_items(fake, num_items=random.randint(5, 10))
+    items = generate_invoice_items(num_items=random.randint(5, 10))
     total = round(sum(item['subtotal'] for item in items), 2)
     tax_rate = 0.07
     tax_amount = round(total * tax_rate, 2)
     grand_total = round(total + tax_amount, 2)
 
     invoice_number = fake.random_number(digits=6)
-    customer_name = fake.name()
-    customer_address = fake.street_address()
-    city = fake.city()
-    state = fake.state_abbr()
-    zipcode = fake.zipcode()
+
+    # Company and customer details
+    company_name = "Lumber Mill Company"
+    company_address = "123 Lumber Mill St"
+    company_city = "Portland"
+    company_state = "OR"
+    company_zipcode = "97201"
+    customer_name = "Lumber Jack Company"
+    customer_address = "456 Lumber Jack St"
+    customer_city = "Salem"
+    customer_state = "OR"
+    customer_zipcode = "97301"
 
     doc = SimpleDocTemplate(os.path.join("invoices", f"invoice_{i}_{j}.pdf"), pagesize=letter)
 
@@ -79,9 +86,10 @@ def generate_invoice(fake, date, i, j, template):
     # Invoice metadata
     invoice_info = [
         ["Invoice Number:", invoice_number, "Date:", date],
-        ["Customer Name:", customer_name, "", ""],
-        ["Customer Address:", customer_address, "", ""],
-        ["City, State, ZIP:", f"{city}, {state} {zipcode}", "", ""]
+        ["Company:", company_name, "Customer:", customer_name],
+        ["Company Address:", company_address, "Customer Address:", customer_address],
+        ["City, State, ZIP:", f"{company_city}, {company_state} {company_zipcode}", "City, State, ZIP:",
+         f"{customer_city}, {customer_state} {customer_zipcode}"]
     ]
     invoice_info_table = Table(invoice_info, colWidths=[100, 200, 100, 200])
     invoice_info_table.setStyle(TableStyle([
@@ -119,6 +127,7 @@ def generate_invoice(fake, date, i, j, template):
     story = [invoice_title, Spacer(1, 12), invoice_info_table, Spacer(1, 24), line_items]
     doc.build(story)
 
+
 def main():
     fake = Faker()
     output_folder = "invoices"
@@ -132,7 +141,7 @@ def main():
             template = (i + j) % 2 + 1
             generate_invoice(fake, date, i, j, template)
 
+
 if __name__ == "__main__":
     main()
-
 
