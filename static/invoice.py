@@ -64,7 +64,7 @@ def generate_invoice(fake, date, i, j, template):
     state = fake.state_abbr()
     zipcode = fake.zipcode()
 
-    doc = SimpleDocTemplate(os.path.join("../../../pdfmaker/invoices", f"invoice_{i}_{j}.pdf"), pagesize=letter)
+    doc = SimpleDocTemplate(os.path.join("invoices", f"invoice_{i}_{j}.pdf"), pagesize=letter)
 
     # Set up styles
     styles = getSampleStyleSheet()
