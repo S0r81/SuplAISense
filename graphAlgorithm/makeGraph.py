@@ -14,7 +14,7 @@ def makegraph(username):
     invoice_db = client.invoices
 
     # Connect to the ChatGPT API
-    openai.api_key = "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"
+    openai.api_key = "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"
     model_engine = "text-davinci-002"
     product_keyword = "any product"  # keyword to identify the final product being built
 

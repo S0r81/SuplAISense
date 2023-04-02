@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from pymongo import MongoClient
-from static import DocumentExtract2
+from . import DocumentExtract2
 import os
 import time
 
