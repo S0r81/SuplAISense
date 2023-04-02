@@ -3,24 +3,21 @@ import pymongo
 import openai
 import networkx as nx
 import matplotlib.pyplot as plt
-from graphviz import Digraph
 
 
 def makegraph(username):
     # Connect to the MongoDB database
     client = pymongo.MongoClient(
         "mongodb+srv://user:HIZ05Jh0NVv6YKg@suplaisense.8zr73kh.mongodb.net/?retryWrites=true&w=majority")
-    users_db = client.users
     invoice_db = client.invoices
 
     # Connect to the ChatGPT API
-    openai.api_key = "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"
+    openai.api_key = "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"
     model_engine = "text-davinci-002"
     product_keyword = "any product"  # keyword to identify the final product being built
 
     # Retrieve the customer's purchases
-    customer = users_db.users.find_one({'customer_name': username})
-    customer_invoices = invoice_db.invoices.find({'buyer_name': username})
+    customer_invoices = list(invoice_db.invoices.find({'buyer_name': username}))
 
     # Analyze the product descriptions to determine which invoices are relevant
     connections = [[username, i['seller_name'], '\n'.join([a for a,b in i['products']])] for i in customer_invoices]
@@ -31,17 +28,18 @@ def makegraph(username):
         for product_keyword, quantity in invoice['products']:
             response = openai.Completion.create(
                 engine=model_engine,
-                prompt=f"Respond yes or no. Is {product_keyword} used in the production of {product_target} respond yes or no do not include an explanation'?\n",
+                prompt=f"Respond yes or no. Is {product_keyword} similar to the materials used in the production of {product_target} respond yes or no do not include an explanation if you are not very sure say yes'?\n",
                 max_tokens=50,
                 n=1,
                 stop=None,
                 temperature=0.5,
             )
             if response.choices[0].text.strip().lower() == "yes":
-                print({'customer_name': invoice['seller_name']})
-                for invoice in users_db.users.find_one({'customer_name': invoice['seller_name']}):
-                    relevant_invoices.append([invoice, product_keyword])
-                    connections.append([invoice['seller_name'], invoice['buyer_name'], product_keyword[0]])
+                connections.append([invoice['seller_name'], invoice['buyer_name'], product_keyword])
+                query_results=invoice_db.invoices.find({'buyer_name': invoice['seller_name']})
+                if query_results:
+                    for invoice in query_results:
+                        relevant_invoices.append([invoice, product_keyword])
 
     # Create an empty graph
     G = nx.Graph()
@@ -58,12 +56,23 @@ def makegraph(username):
         G.add_edge(supplier, buyer, product=str(product))
 
     # # Draw the graph with nodes labeled by their names and edges labeled by the product
-    pos = nx.spring_layout(G)
-    nx.draw(G, pos, with_labels=True, font_weight='bold')
+    return convert_to_tree(G,username)
+
+
+def convert_to_tree(G,username):
+    # Use the Reingold-Tilford algorithm to create a tree-like structure
+    pos = nx.nx_agraph.graphviz_layout(G, prog='dot')
+    
+    # Draw the tree-like structure
+    nx.draw(G, pos, with_labels=True)
+    
     edge_labels = nx.get_edge_attributes(G, 'product')
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_weight='bold')
-    plt.show()
+
+    # Show the plot
+    plt.savefig(f"treeImages/{username}.png")
+    return f"treeImages/{username}.png"
 
 
 if __name__ == '__main__':
-    makegraph("Super Home Builder")
+    print(makegraph("Super Home Builder"))
