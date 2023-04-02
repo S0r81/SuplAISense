@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>My Network</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+  </head>
+  <body>
+    <header>
+      <h1>My Network</h1>
+      <div class="menu-btn">&#9776;</div>
+      <nav class="slide-menu">
+        <a href="#">Home</a>
+        <a href="#">My Profile</a>
+        <a href="#">Connections</a>
+        <a href="#">Messages</a>
+        <a href="#">Settings</a>
+        <a href="#">Sign Out</a>
+        <span class="close-btn">&times;</span>
+      </nav>
+    </header>
+    <main>
+      <div class="container">
+        <div class="search-container">
+          <form>
+            <label for="search-bar">Search for materials or producers:</label>
+            <input type="text" id="search-bar" name="search-bar" placeholder="Enter a search term...">
+            <button type="submit">Search</button>
+          </form>
+        </div>
+        <div class="connections-container">
+          <h2>Connections: <span class="connection-counter">0</span></h2>
+          <ul class="connections-list">
+            <li><a href="#">Connection 1</a></li>
+            <li><a href="#">Connection 2</a></li>
+            <li><a href="#">Connection 3</a></li>
+            <li><a href="#">Connection 4</a></li>
+            <li><a href="#">Connection 5</a></li>
+          </ul>
+        </div>
+      </div>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

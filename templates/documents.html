@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div>
+    <header>
+      <a href="/dashboard"><p>Suppl<b class="ai" >AI</b>Sense</p></a>
+      <span class="menu-btn" onclick="toggleMenu()">&#9776;</span>
+    </header>
+    </div>  
+
+    <div id="slideMenu" class="slide-menu">
+        <a href="javascript:void(0)" class="close-btn" onclick="toggleMenu()">&times;</a>
+        <input type="text" placeholder="Search..." />
+        <a href="/dashboard">Dashboard</a>
+        <a href="/view-supply-chain">View Supply Chain</a>
+        <a href="/my-network">My Network</a>
+    </div>
+
+  <div class="card-wrapper">
+    <div class="menu">
+      <h1 class="center">Documents</h1>
+
+      <form action="/upload" method="POST" enctype="multipart/form-data">
+        <label for="file">Upload PDF:</label>
+        <input type="file" name="file" id="file" accept=".pdf">
+        <input type="submit" value="Upload">
+      </form>
+    </div>
+
+    <div class="card">
+      <h2 class="center">Your Uploaded PDFs</h2>
+      <div id="pdfList"></div>
+    </div>
+  </div>
+
+  {% block scripts %}
+  <script>
+    async function getPdfs() {
+      const response = await fetch('/get_uploaded_pdfs');
+      const pdfs = await response.json();
+    
+      const pdfList = document.getElementById('pdfList');
+      pdfs.forEach(pdf => {
+        const pdfLink = document.createElement('a');
+        pdfLink.href = pdf.url;
+        pdfLink.textContent = pdf.filename;
+        pdfLink.target = '_blank';
+        pdfLink.className = 'pdf-link';
+
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.className = 'delete-button';
+        deleteButton.onclick = async () => {
+          try {
+            const response = await fetch(`/delete_pdf/${pdf.file_id}`, { method: 'POST' });
+            if (!response.ok) {
+              throw new Error('Error deleting PDF');
+            }
+            location.reload();
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Error deleting PDF. Please try again.');
+          }
+        };
+    
+        const listItem = document.createElement('li');
+        listItem.appendChild(pdfLink);
+        listItem.appendChild(deleteButton);
+    
+        pdfList.appendChild(listItem);
+      });
+    }
+    
+    getPdfs();
+  </script>
+  {% endblock %}
+{% endblock %}

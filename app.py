@@ -95,3 +95,12 @@ def delete_pdf(file_id):
         print(e)
         return 'Error deleting PDF', 400
 
+@app.route('/documents')
+def documents():
+    return render_template('documents.html')
+
+@app.route('/network')
+def network():
+    return render_template('mynetwork.html')
+
+
