@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 import pymongo
 import openai
 import networkx as nx
@@ -22,10 +23,11 @@ def makegraph(username):
     customer_invoices = invoice_db.invoices.find({'buyer_name': username})
 
     # Analyze the product descriptions to determine which invoices are relevant
-    connections = [[username, i['seller_name'], i['products'][:, 0]] for i in customer_invoices]
+    connections = [[username, i['seller_name'], '\n'.join([a for a,b in i['products']])] for i in customer_invoices]
     relevant_invoices = [[i, "any product"] for i in customer_invoices]
     while relevant_invoices:
         invoice, product_target = relevant_invoices.pop(0)
+        print(invoice['filename'])
         for product_keyword, quantity in invoice['products']:
             response = openai.Completion.create(
                 engine=model_engine,
@@ -36,9 +38,10 @@ def makegraph(username):
                 temperature=0.5,
             )
             if response.choices[0].text.strip().lower() == "yes":
+                print({'customer_name': invoice['seller_name']})
                 for invoice in users_db.users.find_one({'customer_name': invoice['seller_name']}):
                     relevant_invoices.append([invoice, product_keyword])
-                    connections.append([invoice['seller_name'], invoice['buyer_name'], product_keyword])
+                    connections.append([invoice['seller_name'], invoice['buyer_name'], product_keyword[0]])
 
     # Create an empty graph
     G = nx.Graph()
@@ -54,7 +57,7 @@ def makegraph(username):
         supplier, buyer, product = connection
         G.add_edge(supplier, buyer, product=str(product))
 
-    # Draw the graph with nodes labeled by their names and edges labeled by the product
+    # # Draw the graph with nodes labeled by their names and edges labeled by the product
     pos = nx.spring_layout(G)
     nx.draw(G, pos, with_labels=True, font_weight='bold')
     edge_labels = nx.get_edge_attributes(G, 'product')
@@ -63,4 +66,4 @@ def makegraph(username):
 
 
 if __name__ == '__main__':
-    makegraph('Super Home Builders')
+    makegraph("Super Home Builder")
