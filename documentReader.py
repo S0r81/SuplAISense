@@ -1,7 +1,6 @@
 from pymongo import MongoClient
 from static import DocumentExtract2
 from flask import make_response
-
 def parese_temp_file(filename):
     client = MongoClient(
         "mongodb+srv://user:HIZ05Jh0NVv6YKg@suplaisense.8zr73kh.mongodb.net/?retryWrites=true&w=majority")
