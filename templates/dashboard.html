@@ -8,8 +8,8 @@
 
 <div id="mySidenav" class="sidenav">
   <div class="logo-header">
-    <img src="./src/imgs/Sense_f.svg" alt="SUPLAISENSE" class="logo">
-</div>
+    <img src="/static/imgs/Sense_f.svg" alt="SUPLAISENSE" class="logo">
+  </div>
   <a href="#" class="icon-a"><i class="fa fa-users icons"></i> &nbsp;&nbsp;Network</a>
   <a href="#" class="icon-a"><i class="fa fa-archive"></i> &nbsp;&nbsp;Documents</a>
   <a href="#" class="icon-a"><i class="fa fa-cubes"></i> &nbsp;&nbsp;Projects</a>
@@ -27,7 +27,7 @@
 
   <div class="clearfix"></div>
   <br />
-  
+
   <div class="col-div-3">
     <div class="box" style="margin-left: 10px;">
       <p>67<br /><span>Network</span></p>
@@ -69,12 +69,6 @@
             <td>Roland Mendel</td>
             <td>Austria</td>
           </tr>
-          <tr>
-            <td>Island Trading</td>
-            <td>Helen Bennett</td>
-            <td>UK</td>
-          </tr>
-
 
         </table>
       </div>
@@ -94,9 +88,13 @@
                 <h4>Select File here</h4>
               </header>
               <p>Files Supported: PDF, TEXT, DOC , DOCX</p>
-              <input class="input_upload" type="file" hidden accept=".doc,.docx,.pdf" id="fileID"
-                style="display:none;">
-              <button class="btn_upload">Choose File</button>
+              <form action="/upload" method="POST" enctype="multipart/form-data">
+                <input class="input_upload" type="file" name="file" hidden accept=".doc,.docx,.pdf" id="file"
+                  style="display:none;">
+                <label class="btn_upload" for="file">Choose File</label>
+                <input type="file" name="file" id="file" accept=".pdf" style="display:none;"></input>
+                <input type="submit" value="Upload">
+              </form>
             </div>
 
           </div>
@@ -114,7 +112,7 @@
 <!-- footer -->
 <footer class="footer">
   <div class="container">
-      <p>&copy; 2023 SuplaiSense. All rights reserved.</p>
+    <p>&copy; 2023 SuplaiSense. All rights reserved.</p>
   </div>
 </footer>
 
@@ -124,8 +122,8 @@
   async function getPdfs() {
     const response = await fetch('/get_uploaded_pdfs');
     const pdfs = await response.json();
-      
-  
+
+
     const pdfCount = document.getElementById('pdfCount');
     pdfCount.textContent = `Total PDFs: ${pdfs.length}`;
 
@@ -142,7 +140,9 @@
       deleteButton.className = 'delete-button';
       deleteButton.onclick = async () => {
         try {
-          const response = await fetch(`/delete_pdf/${pdf.file_id}`, { method: 'POST' });
+          const response = await fetch(`/delete_pdf/${pdf.file_id}`, {
+            method: 'POST'
+          });
           if (!response.ok) {
             throw new Error('Error deleting PDF');
           }
@@ -152,17 +152,17 @@
           alert('Error deleting PDF. Please try again.');
         }
       };
-  
+
       const listItem = document.createElement('li');
       listItem.appendChild(pdfLink);
       listItem.appendChild(deleteButton);
-  
+
       pdfList.appendChild(listItem);
     });
   }
 
-  
-  
+
+
   getPdfs();
 </script>
 {% endblock %}

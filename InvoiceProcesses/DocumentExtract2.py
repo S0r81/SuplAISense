@@ -5,7 +5,7 @@ import ast
 from io import BytesIO
 
 def parseDocumentPath(path,filename):# Replace this with your OpenAI API key
-    openai.api_key = "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"
+    openai.api_key = "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"
     pdf_file_path=path+filename
     pdf_text = extract_text_from_pdf_path(pdf_file_path)
     buyer_name = find_buyer_name_gpt(pdf_text)
@@ -17,7 +17,7 @@ def parseDocumentPath(path,filename):# Replace this with your OpenAI API key
     return [filename,pdf_binary,seller_name,buyer_name,address,products,date]
 
 def parseDocumentData(filename,file_content,binary):
-    openai.api_key = "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"
+    openai.api_key = "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"
     pdf_text = extract_text_from_pdf(file_content)
     buyer_name = find_buyer_name_gpt(pdf_text)
     seller_name = find_seller_name_gpt(pdf_text)
