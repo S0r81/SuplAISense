@@ -69,7 +69,8 @@ def upload_file():
         temp_invoice_db.insert_one({'filename': file.filename, 'content':content, 'user_id': session['user']['_id']})
 
         # Call Parse Temp File
-        parse_temp_file(file.filename)
+        seller_name, address, date= parse_temp_file(file.filename)
+        session["tableData"].append([seller_name, address, date]) 
 
         # Flash a success message
         flash('File uploaded successfully!')
