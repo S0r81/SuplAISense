@@ -84,8 +84,8 @@ def upload_file():
 @login_required
 def get_uploaded_pdfs():
     user_id = session['user']['_id']
-    files = list(invoice_db.find({"buyer_id": user_id}))
-    return jsonify([{"file_id": str(file["_id"]), "filename": file["filename"], "url": f"/pdf/{file['_id']}"} for file in files])
+    files = list(fs.find({"user_id": user_id}))
+    return jsonify([{"file_id": str(file._id), "filename": file.filename, "url": f"/pdf/{file._id}"} for file in files])
 
 
 
