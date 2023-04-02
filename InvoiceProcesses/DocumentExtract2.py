@@ -2,11 +2,12 @@ import pdfplumber
 import openai
 import bson
 import ast
+from io import BytesIO
 
-def parseDocument(path,filename):# Replace this with your OpenAI API key
-    openai.api_key = "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"
+def parseDocumentPath(path,filename):# Replace this with your OpenAI API key
+    openai.api_key = "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"
     pdf_file_path=path+filename
-    pdf_text = extract_text_from_pdf(pdf_file_path)
+    pdf_text = extract_text_from_pdf_path(pdf_file_path)
     buyer_name = find_buyer_name_gpt(pdf_text)
     seller_name = find_seller_name_gpt(pdf_text)
     address = find_seller_address_gpt(pdf_text)
@@ -15,7 +16,27 @@ def parseDocument(path,filename):# Replace this with your OpenAI API key
     pdf_binary = pdf_to_bson(pdf_file_path)
     return [filename,pdf_binary,seller_name,buyer_name,address,products,date]
 
-def extract_text_from_pdf(file_path):
+def parseDocumentData(filename,file_content,binary):
+    openai.api_key = "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"
+    pdf_text = extract_text_from_pdf(file_content)
+    buyer_name = find_buyer_name_gpt(pdf_text)
+    seller_name = find_seller_name_gpt(pdf_text)
+    address = find_seller_address_gpt(pdf_text)
+    products=find_products(pdf_text)
+    date = find_date_gpt(pdf_text)
+    pdf_binary = binary
+    return [filename,pdf_binary,seller_name,buyer_name,address,products,date]
+
+def extract_text_from_pdf(pdf_data):
+    pdf_data.headers['Content-Type'] = 'application/pdf'
+    # Use pdfplumber to extract the text from the PDF
+    with pdfplumber.open(BytesIO(pdf_data.data)) as pdf:
+        text = ""
+        for page in pdf.pages:
+            text += page.extract_text()
+    return text
+
+def extract_text_from_pdf_path(file_path):
     with pdfplumber.open(file_path) as pdf:
         text = ""
         for page in pdf.pages:
@@ -59,7 +80,7 @@ def find_seller_address_gpt(text):
     return response.choices[0].text.strip()
 
 def find_products(text):
-    prompt = f'Based on the following invoice content, return an array of product name and quantity of product for each product in the transaction the format should be similar to [["Douglas Fir Home Frames", 20], ["Western Red Home Frames", 55], ["Hemlock Home Frames", 71]] do not include subtotal, total, tax, nor shipping, return the answer and only the answer, no explanation.    \n\n{text}'
+    prompt = f'Based on the following invoice content, return an array of product name and quantity of product for each product in the transaction the format should be similar to [["Douglas Fir Home Frames", 20], ["Western Red Home Frames", 55], ["Hemlock Home Frames", 71]] do not include subtotal as a product. do not include total as a product, do not include tax as a product, do not include shipping as a product, return the answer and only the answer, no explanation.    \n\n{text}'
     response = openai.Completion.create(
         engine="text-davinci-002",
         prompt=prompt,
