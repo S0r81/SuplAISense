@@ -11,7 +11,6 @@ body{
 	margin:0px;
 	padding: 0px;
 	overflow: hidden;
-	font-family: system-ui;
   height: 100vh;
   background-image: radial-gradient(circle, rgba(5, 66, 116, 1) 0%, rgba(8, 7, 16, 1) 100%);
 }

@@ -30,4 +30,4 @@ def parse_temp_file(filename):
                 'date': attributes[6],
                 'buyer_id': buyer_id  # add the user_id attribute here
             })
-    print("done")
+    return [attributes[2],attributes[4],attributes[6]]

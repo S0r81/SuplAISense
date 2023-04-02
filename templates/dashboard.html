@@ -12,7 +12,8 @@
   </div>
   <a href="#" class="icon-a"><i class="fa fa-users icons"></i> &nbsp;&nbsp;Network</a>
   <a href="#" class="icon-a"><i class="fa fa-archive"></i> &nbsp;&nbsp;Documents</a>
-  <a href="#" class="icon-a"><i class="fa fa-cubes"></i> &nbsp;&nbsp;Projects</a>
+  <a href="/diagram_now" class="icon-a"><i class="fa fa-cubes"></i> &nbsp;&nbsp;Diagram</a>
+  <a href="/search_now" class="icon-a"><i class="fa fa-search"></i> &nbsp;&nbsp;Search</a>
   <a href="/user/signout" class="icon-a"><i class="fa fa-times-circle"></i> &nbsp;&nbsp;Sign Out</a>
 
 </div>
@@ -54,22 +55,13 @@
             <th>Address</th>
             <th>Date</th>
           </tr>
+          {% for td in session["tableData"] %}
           <tr>
-            <td>Alfreds Futterkiste</td>
-            <td>Maria Anders</td>
-            <td>Germany</td>
+            <td>{{ td[0] }}</td>
+            <td>{{ td[1] }}</td>
+            <td>{{ td[2] }}</td>
           </tr>
-          <tr>
-            <td>Centro comercial Moctezuma</td>
-            <td>Francisco Chang</td>
-            <td>Mexico</td>
-          </tr>
-          <tr>
-            <td>Ernst Handel</td>
-            <td>Roland Mendel</td>
-            <td>Austria</td>
-          </tr>
-
+          {% endfor %}
         </table>
       </div>
     </div>

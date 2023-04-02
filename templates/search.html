@@ -1,14 +1,38 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Search Invoices</title>
-</head>
-<body>
-    <h1>Search Invoices</h1>
-    <form action="/results" method="post">
-        <label for="query">Enter your search query:</label>
-        <input type="text" id="query" name="query">
-        <button type="submit">Search</button>
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+
+<link rel="stylesheet" href="/static/css/search.css" type="text/css" />
+
+<div class="logo-header" style="margin-top: 50px;">
+    <img src="/static/imgs/Sense_f.svg" alt="SUPLAISENSE" class="logo" href="/now_dash">
+</div>
+
+<div class="clearfix"></div>
+<br />
+
+<div class="this_one">
+
+    <!-- Basic Search -->
+    <div class="preview-zone">
+        <h4>Enter your search query:</h4>
+        <section class="search" role="search">
+            <form action="/results" method="post" class="search__form">
+                <input class="search__input" type="text" id="query" name="query" placeholder="I am looking for..."
+                    required />
+                <button class="search_btn-submit" type="submit">Search</button>
+            </form>
+        </section>
+        <a href="/now_dash">Back</a>
+    </div>
+
+</div>
+
+<!-- footer -->
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2023 SuplaiSense. All rights reserved.</p>
+    </div>
+</footer>
+
+{% endblock %}

@@ -1,0 +1,91 @@
+* {
+    font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+      outline: none;
+      border: none;
+  }
+  
+  body{
+      margin:0px;
+      padding: 0px;
+    height: 100vh;
+    background-image: radial-gradient(circle, rgba(5, 66, 116, 1) 0%, rgba(8, 7, 16, 1) 100%);
+  }
+
+  .clearfix{
+	clear: both;
+}
+
+.this_one {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+h4 {
+  margin-top: 0;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.preview-zone {
+  padding: 30px;
+  margin: 15px;
+  background-color: transparent;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+  padding-right: 120px;
+}
+
+.logo-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 120px;
+}
+
+.logo {
+    width: 512px;
+}
+
+input {
+    padding: 15px;
+    width: 300px;
+    color: #eee;
+    font-size: 14px;
+    border: 0;
+}
+  
+.search_btn-submit {
+    position: absolute;
+    padding: 15px;
+    color: #eee;
+    font-size: 13px;
+    background-color: #666;
+    border: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  .footer {
+    background-color: #000;
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+  

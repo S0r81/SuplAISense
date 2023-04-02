@@ -70,7 +70,10 @@ def upload_file():
 
         # Call Parse Temp File
         seller_name, address, date= parse_temp_file(file.filename)
-        session["tableData"].append([seller_name, address, date]) 
+        if "tableData" in session:
+            session["tableData"].append([seller_name, address, date]) 
+        else:
+            session["tableData"]=[[seller_name, address, date]]
 
         # Flash a success message
         flash('File uploaded successfully!')
@@ -120,6 +123,18 @@ def sign_up():
 @app.route('/log_in')
 def log_in():
     return render_template('home.html')
+
+@app.route('/search_now')
+def search_now():
+    return render_template('search.html')
+
+@app.route('/diagram_now')
+def diagram_now():
+    return render_template('diagram.html')
+
+@app.route('/now_dash')
+def dashb():
+    return render_template('dashboard.html')
 
 @app.route('/documents')
 def documents():

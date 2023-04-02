@@ -1,9 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Invoice Search Results</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
+
+<link rel="stylesheet" href="/static/css/search.css" type="text/css" />
+
+<style>
+    * {
+        padding: 50px;
+        padding-top: 10px;
+    }
+</style>
+
+    <a href="/now_dash">Back</a>
     <h1>Invoice Search Results</h1>
     {% if results %}
         <ul>
@@ -14,5 +22,5 @@
     {% else %}
         <p>No results found.</p>
     {% endif %}
-</body>
-</html>
+
+{% endblock %}
