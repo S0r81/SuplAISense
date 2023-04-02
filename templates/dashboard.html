@@ -2,43 +2,123 @@
 
 {% block content %}
 
-  <link rel="stylesheet" href="/static/css/normalize.css">
-  <link rel="stylesheet" href="/static/css/styles.css">
+<link rel="stylesheet" href="./src/style/style_dashboard.css" type="text/css" />
+<link rel="stylesheet" href="./src/style/upload_file.css" type="text/css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-  <div>
-    <header>
-      <p>Suppl<a class="ai">AI</a>Sense</p>
-      <span class="menu-btn" onclick="toggleMenu()">&#9776;</span>
-    </header>
+<div id="mySidenav" class="sidenav">
+  <div class="logo-header">
+    <img src="./src/imgs/Sense_f.svg" alt="SUPLAISENSE" class="logo">
+</div>
+  <a href="#" class="icon-a"><i class="fa fa-users icons"></i> &nbsp;&nbsp;Network</a>
+  <a href="#" class="icon-a"><i class="fa fa-archive"></i> &nbsp;&nbsp;Documents</a>
+  <a href="#" class="icon-a"><i class="fa fa-cubes"></i> &nbsp;&nbsp;Projects</a>
+  <a href="/user/signout" class="icon-a"><i class="fa fa-times-circle"></i> &nbsp;&nbsp;Sign Out</a>
+
+</div>
+<div id="main">
+
+  <div class="head">
+    <div class="col-div-6">
+      <span style="font-size:30px;cursor:pointer; color: white;">Dashboard</span>
+    </div>
+    <div class="clearfix"></div>
   </div>
 
-  <div id="slideMenu" class="slide-menu">
-      <a href="javascript:void(0)" class="close-btn" onclick="toggleMenu()">&times;</a>
-      <input type="text" placeholder="Search..." />
-      <a href="/documents">My Documents</a>
-      <a href="/view-supply-chain">View Supply Chain</a>
-      <a href="mynetwork.html">My Network</a>
-  </div>
-
-  <div class="card-wrapper">
-
-    <div class="menu">
-
-      <h1 class="center">Dashboard</h1>
-
-      <div class="center">
-        <a href="/user/signout" class="btn btn--secondary">Sign Out</a>
-      </div>
-
-      <h2 class="center">Your Info</h2>
-
-      <p>
-        <strong>ID:</strong> {{ session['user']['_id'] }}<br>
-        <strong>Name:</strong> {{ session['user']['name'] }}<br>
-        <strong>Email:</strong> {{ session['user']['email'] }}
-      </p>
+  <div class="clearfix"></div>
+  <br />
+  
+  <div class="col-div-3">
+    <div class="box" style="margin-left: 10px;">
+      <p>67<br /><span>Network</span></p>
+      <i class="fa fa-users box-icon"></i>
     </div>
   </div>
-  <script src="scripts.js"></script>
+  <div class="col-div-3">
+    <div class="box">
+      <p>88<br /><span>Projects</span></p>
+      <i class="fa fa-cubes box-icon"></i>
+    </div>
+  </div>
+
+  <div class="clearfix"></div>
+  <br /><br />
+  <div class="col-div-8">
+    <div class="box-8">
+      <div class="content-box">
+        <p>Your Documents</p>
+        <br />
+        <table>
+          <tr>
+            <th>Company</th>
+            <th>Address</th>
+            <th>Date</th>
+          </tr>
+          <tr>
+            <td>Alfreds Futterkiste</td>
+            <td>Maria Anders</td>
+            <td>Germany</td>
+          </tr>
+          <tr>
+            <td>Centro comercial Moctezuma</td>
+            <td>Francisco Chang</td>
+            <td>Mexico</td>
+          </tr>
+          <tr>
+            <td>Ernst Handel</td>
+            <td>Roland Mendel</td>
+            <td>Austria</td>
+          </tr>
+          <tr>
+            <td>Island Trading</td>
+            <td>Helen Bennett</td>
+            <td>UK</td>
+          </tr>
+
+
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-div-4">
+    <div class="box-4">
+      <div class="content-box">
+
+        <p>Upload Files</p>
+        <h3></h3>
+        <div class="container_upload">
+          <div class="card_upload">
+            <div class="drop_box_upload">
+              <header>
+                <h4>Select File here</h4>
+              </header>
+              <p>Files Supported: PDF, TEXT, DOC , DOCX</p>
+              <input class="input_upload" type="file" hidden accept=".doc,.docx,.pdf" id="fileID"
+                style="display:none;">
+              <button class="btn_upload">Choose File</button>
+            </div>
+
+          </div>
+        </div>
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <div class="clearfix"></div>
+</div>
+
+<!-- footer -->
+<footer class="footer">
+  <div class="container">
+      <p>&copy; 2023 SuplaiSense. All rights reserved.</p>
+  </div>
+</footer>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 {% endblock %}
