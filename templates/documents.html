@@ -33,6 +33,7 @@
 
     <div class="card">
       <h2 class="center">Your Uploaded PDFs</h2>
+      <div id="pdfCount" class="center"></div>
       <div id="pdfList"></div>
     </div>
   </div>
@@ -42,7 +43,11 @@
     async function getPdfs() {
       const response = await fetch('/get_uploaded_pdfs');
       const pdfs = await response.json();
+        
     
+      const pdfCount = document.getElementById('pdfCount');
+      pdfCount.textContent = `Total PDFs: ${pdfs.length}`;
+
       const pdfList = document.getElementById('pdfList');
       pdfs.forEach(pdf => {
         const pdfLink = document.createElement('a');
@@ -74,6 +79,8 @@
         pdfList.appendChild(listItem);
       });
     }
+
+    
     
     getPdfs();
   </script>

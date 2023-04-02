@@ -29,4 +29,4 @@ def parese_temp_file(filename):
                 })
         else:
             print(f"User not found for buyer_name: {attributes[3]}")
-    print("done")
+    return [seller_name, address, date]

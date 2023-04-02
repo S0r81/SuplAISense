@@ -15,6 +15,9 @@ from pymongo import MongoClient
 import bson.binary
 
 
+
+
+
 app = Flask(__name__)
 app.secret_key = b'\xcc^\x91\xea\x17-\xd0W\x03\xa7\xf8J0\xac8\xc5'
 
@@ -66,7 +69,8 @@ def upload_file():
         temp_invoice_db.insert_one({'filename': file.filename, 'content':content, 'user_id': session['user']['_id']})
 
         # Call Parse Temp File
-        parse_temp_file(file.filename)
+        seller_name, address, date= parse_temp_file(file.filename)
+        session["tableData"].append([seller_name, address, date]) 
 
         # Flash a success message
         flash('File uploaded successfully!')
@@ -84,8 +88,8 @@ def upload_file():
 @login_required
 def get_uploaded_pdfs():
     user_id = session['user']['_id']
-    files = list(fs.find({"user_id": user_id}))
-    return jsonify([{"file_id": str(file._id), "filename": file.filename, "url": f"/pdf/{file._id}"} for file in files])
+    files = list(invoice_db.find({"buyer_id": user_id}))
+    return jsonify([{"file_id": str(file['_id']), "filename": file['filename'], "url": f"/pdf/{file['_id']}"} for file in files])
 
 
 
@@ -124,5 +128,60 @@ def documents():
 @app.route('/network')
 def network():
     return render_template('mynetwork.html')
+
+@app.route('/search')
+@login_required
+def search():
+    return render_template('search.html')
+
+@app.route('/results',methods=['POST'])
+@login_required
+def results():
+    query = request.form['query']
+    invoices = invoice_db.find({
+    "$or": [
+        { "_id": query },
+        { "seller_name": query },
+        { "buyer_name": query },
+        { "date": query },
+        { "address": query },
+        { "filename": query }
+    ]
+    })
+    return render_template('results.html', results=invoices)
+
+
+
+@app.route('/search_user', methods=['POST'])
+@login_required
+def search_user():
+    user_id = request.form.get('user_id')
+    user = db.users.find_one({"_id": user_id})
+    if user:
+        return jsonify({"_id": user["_id"], "name": user["name"]})
+    else:
+        return jsonify({"error": "User not found"}), 404
+
+@app.route('/connect', methods=['POST'])
+@login_required
+def connect():
+    user_id = request.form.get('user_id')
+    current_user_id = session['user']['_id']
+    if user_id == current_user_id:
+        return jsonify({"error": "You cannot connect with yourself"}), 400
+
+    user = db.users.find_one({"_id": user_id})
+    if not user:
+        return jsonify({"error": "User not found"}), 400
+
+    if user_id not in session['user']['connections']:
+        db.users.update_one({"_id": current_user_id}, {"$push": {"connections": user_id}})
+        db.users.update_one({"_id": user_id}, {"$push": {"connections": current_user_id}})
+        session['user']['connections'].append(user_id)
+        return jsonify({"message": "Connected successfully"}), 200
+    else:
+        return jsonify({"error": "Already connected"}), 400
+
+
 
 

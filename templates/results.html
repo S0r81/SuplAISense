@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoice Search Results</title>
+</head>
+<body>
+    <h1>Invoice Search Results</h1>
+    {% if results %}
+        <ul>
+        {% for result in results %}
+            <li><a href="/pdf/{{ result['_id'] }}">{{ result['filename'] }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+</body>
+</html>

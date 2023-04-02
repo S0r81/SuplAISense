@@ -7,7 +7,6 @@ import random
 import copy
 from flask import make_response, session
 
-
 def makegraph(username):
     # Connect to the MongoDB database
     client = pymongo.MongoClient(

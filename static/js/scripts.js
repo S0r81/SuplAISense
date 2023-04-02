@@ -20,6 +20,8 @@ $("form[name=signup_form").submit(function(e) {
   e.preventDefault();
 });
 
+
+
 $("form[name=login_form").submit(function(e) {
 
   var $form = $(this);
