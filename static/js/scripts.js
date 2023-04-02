@@ -41,3 +41,10 @@ $("form[name=login_form").submit(function(e) {
 
   e.preventDefault();
 });
+
+function toggleMenu() {
+  const menu = document.getElementById('slideMenu');
+  menu.style.right = menu.style.right === '0px' ? '-250px' : '0px';
+}
+
+
