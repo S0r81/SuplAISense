@@ -15,6 +15,9 @@ from pymongo import MongoClient
 import bson.binary
 
 
+
+
+
 app = Flask(__name__)
 app.secret_key = b'\xcc^\x91\xea\x17-\xd0W\x03\xa7\xf8J0\xac8\xc5'
 
@@ -109,6 +112,13 @@ def delete_pdf(file_id):
         print(e)
         return 'Error deleting PDF', 400
 
+@app.route('/sign_up')
+def sign_up():
+    return render_template('sign_up.html')
+  
+@app.route('/log_in')
+def log_in():
+    return render_template('home.html')
 
 @app.route('/documents')
 def documents():
@@ -117,5 +127,37 @@ def documents():
 @app.route('/network')
 def network():
     return render_template('mynetwork.html')
+
+@app.route('/search_user', methods=['POST'])
+@login_required
+def search_user():
+    user_id = request.form.get('user_id')
+    user = db.users.find_one({"_id": user_id})
+    if user:
+        return jsonify({"_id": user["_id"], "name": user["name"]})
+    else:
+        return jsonify({"error": "User not found"}), 404
+
+@app.route('/connect', methods=['POST'])
+@login_required
+def connect():
+    user_id = request.form.get('user_id')
+    current_user_id = session['user']['_id']
+    if user_id == current_user_id:
+        return jsonify({"error": "You cannot connect with yourself"}), 400
+
+    user = db.users.find_one({"_id": user_id})
+    if not user:
+        return jsonify({"error": "User not found"}), 400
+
+    if user_id not in session['user']['connections']:
+        db.users.update_one({"_id": current_user_id}, {"$push": {"connections": user_id}})
+        db.users.update_one({"_id": user_id}, {"$push": {"connections": current_user_id}})
+        session['user']['connections'].append(user_id)
+        return jsonify({"message": "Connected successfully"}), 200
+    else:
+        return jsonify({"error": "Already connected"}), 400
+
+
 
 
