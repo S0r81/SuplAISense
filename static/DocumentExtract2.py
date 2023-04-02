@@ -1,21 +1,19 @@
 import pdfplumber
 import openai
 import bson
+import ast
 
-def parseDocument(pdf_file_path):# Replace this with your OpenAI API key
-    openai.api_key = "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"
+def parseDocument(path,filename):# Replace this with your OpenAI API key
+    openai.api_key = "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"
+    pdf_file_path=path+filename
     pdf_text = extract_text_from_pdf(pdf_file_path)
     buyer_name = find_buyer_name_gpt(pdf_text)
     seller_name = find_seller_name_gpt(pdf_text)
-    address = find_address_gpt(pdf_text)
-    products=[]
-    descriptions = find_product_description_gpt(pdf_text)
-    for description in descriptions:
-        quantity = find_quantity_gpt(description,pdf_text)
-        products.append([description,quantity])
+    address = find_seller_address_gpt(pdf_text)
+    products=find_products(pdf_text)
     date = find_date_gpt(pdf_text)
     pdf_binary = pdf_to_bson(pdf_file_path)
-    return [pdf_binary,seller_name,buyer_name,address,products,date]
+    return [filename,pdf_binary,seller_name,buyer_name,address,products,date]
 
 def extract_text_from_pdf(file_path):
     with pdfplumber.open(file_path) as pdf:
@@ -25,7 +23,7 @@ def extract_text_from_pdf(file_path):
     return text
 
 def find_buyer_name_gpt(text):
-    prompt = f"Find the buyer name in the following text:\n\n{text}\nThe customer name is: "
+    prompt = f"The following text represents an invoice from a seller to a buyer. return the name of the buyer in the text below respond with the answer in one line and only the answer no explanation\n\n{text}\n"
     response = openai.Completion.create(
         engine="text-davinci-002",
         prompt=prompt,
@@ -37,7 +35,7 @@ def find_buyer_name_gpt(text):
     return response.choices[0].text.strip()
 
 def find_seller_name_gpt(text):
-    prompt = f"Find the seller name in the following text:\n\n{text}\nThe seller name is: "
+    prompt = f"The following text represents an invoice from a seller to a buyer. return the name of the seller in the text below respond with the answer in one line and only the answer no explanation\n\n{text}\n"
     response = openai.Completion.create(
         engine="text-davinci-002",
         prompt=prompt,
@@ -48,8 +46,8 @@ def find_seller_name_gpt(text):
     )
     return response.choices[0].text.strip()
 
-def find_address_gpt(text):
-    prompt = f"Find the address of the seller in the following text:\n\n{text}\nThe address is: "
+def find_seller_address_gpt(text):
+    prompt = f"The following text represents an invoice from a seller to a buyer. return the address of the seller in the text below respond with the answer in one line and only the answer no explanation\n\n{text}\n"
     response = openai.Completion.create(
         engine="text-davinci-002",
         prompt=prompt,
@@ -60,29 +58,36 @@ def find_address_gpt(text):
     )
     return response.choices[0].text.strip()
 
-def find_product_description_gpt(text):
-    prompt = f"Find all the descriptions of the products and write them as a comma seperated list of the descriptions from the following text :\n\n{text}\nThe descriptions: "
+def find_products(text):
+    prompt = f'Based on the following invoice content, return an array of product name and quantity of product for each product in the transaction the format should be similar to [["Douglas Fir Home Frames", 20], ["Western Red Home Frames", 55], ["Hemlock Home Frames", 71]] do not include subtotal, total, tax, nor shipping, return the answer and only the answer, no explanation.    \n\n{text}'
     response = openai.Completion.create(
         engine="text-davinci-002",
         prompt=prompt,
-        max_tokens=20,
+        max_tokens=200,
         n=1,
         stop=None,
         temperature=0.5,
     )
-    return response.choices[0].text.strip()
+    product_string = response.choices[0].text.strip()
 
-def find_quantity_gpt(descripotion,text):
-    prompt = f"Find the quantity of {descripotion} in the following text:\n\n{text}\nThe quantity is: "
-    response = openai.Completion.create(
-        engine="text-davinci-002",
-        prompt=prompt,
-        max_tokens=20,
-        n=1,
-        stop=None,
-        temperature=0.5,
-    )
-    return response.choices[0].text.strip()
+    # Post-processing step to convert the response to a list of lists
+    products = []
+    for product in product_string.split("], ["):
+        product = product.strip("[]")
+        product_name, quantity = product.rsplit(",", 1)
+        product_name = product_name.strip('"')
+        
+        # Check if the quantity is a valid integer
+        try:
+            quantity = int(quantity.strip())
+        except ValueError:
+            print(f"Invalid quantity value: {quantity}")
+            continue
+
+        products.append([product_name, quantity])
+
+    return products
+
 
 def find_date_gpt(text):
     prompt = f"Find the date of the invoice in the following text:\n\n{text}\nThe date is: "

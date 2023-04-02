@@ -50,19 +50,12 @@ def generate_invoice_items(fake, num_items=5):
 
     return items
 
-def generate_invoice(fake, date, i, j, template):
-    items = generate_invoice_items(fake, num_items=random.randint(5, 10))
+def generate_invoice(date, i, j, template):
     total = round(sum(item['subtotal'] for item in items), 2)
     tax_rate = 0.07
     tax_amount = round(total * tax_rate, 2)
     grand_total = round(total + tax_amount, 2)
-
-    invoice_number = fake.random_number(digits=6)
-    customer_name = fake.name()
-    customer_address = fake.street_address()
-    city = fake.city()
-    state = fake.state_abbr()
-    zipcode = fake.zipcode()
+    items,invoice_numbe,customer_name,customer_address,city,state,zipcode
 
     doc = SimpleDocTemplate(os.path.join("../../../pdfmaker/invoices", f"invoice_{i}_{j}.pdf"), pagesize=letter)
 
