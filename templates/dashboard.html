@@ -2,8 +2,8 @@
 
 {% block content %}
 
-<link rel="stylesheet" href="./src/style/style_dashboard.css" type="text/css" />
-<link rel="stylesheet" href="./src/style/upload_file.css" type="text/css" />
+<link rel="stylesheet" href="/static/css/style_dashboard.css" type="text/css" />
+<link rel="stylesheet" href="/static/css/upload_file.css" type="text/css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <div id="mySidenav" class="sidenav">
@@ -118,7 +118,53 @@
   </div>
 </footer>
 
-
+{% block scripts %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  async function getPdfs() {
+    const response = await fetch('/get_uploaded_pdfs');
+    const pdfs = await response.json();
+      
+  
+    const pdfCount = document.getElementById('pdfCount');
+    pdfCount.textContent = `Total PDFs: ${pdfs.length}`;
+
+    const pdfList = document.getElementById('pdfList');
+    pdfs.forEach(pdf => {
+      const pdfLink = document.createElement('a');
+      pdfLink.href = pdf.url;
+      pdfLink.textContent = pdf.filename;
+      pdfLink.target = '_blank';
+      pdfLink.className = 'pdf-link';
+
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.className = 'delete-button';
+      deleteButton.onclick = async () => {
+        try {
+          const response = await fetch(`/delete_pdf/${pdf.file_id}`, { method: 'POST' });
+          if (!response.ok) {
+            throw new Error('Error deleting PDF');
+          }
+          location.reload();
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error deleting PDF. Please try again.');
+        }
+      };
+  
+      const listItem = document.createElement('li');
+      listItem.appendChild(pdfLink);
+      listItem.appendChild(deleteButton);
+  
+      pdfList.appendChild(listItem);
+    });
+  }
+
+  
+  
+  getPdfs();
+</script>
+{% endblock %}
 
 {% endblock %}
