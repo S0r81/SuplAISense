@@ -3,6 +3,8 @@ import pymongo
 import openai
 import networkx as nx
 import matplotlib.pyplot as plt
+import random
+import copy
 
 
 def makegraph(username):
@@ -56,23 +58,70 @@ def makegraph(username):
         G.add_edge(supplier, buyer, product=str(product))
 
     # # Draw the graph with nodes labeled by their names and edges labeled by the product
-    return convert_to_tree(G,username)
+    G = tree_layout(G)
+    return graphToPic(G,username)
+
+def graphToPic(G,username):
+    # Draw the graph
+    plt.figure(figsize=(20, 20))
+    nx.draw_networkx(G, pos=nx.get_node_attributes(G, 'pos'), with_labels=True, node_size=1000, node_color='lightblue', font_size=20)
+    plt.axis('off')
+    plt.savefig('treeImages/'+username+'.png', bbox_inches='tight', pad_inches=0)
+    return 'treeImages/'+username+'.png'
 
 
-def convert_to_tree(G,username):
-    # Use the Reingold-Tilford algorithm to create a tree-like structure
-    pos = nx.nx_agraph.graphviz_layout(G, prog='dot')
-    
-    # Draw the tree-like structure
-    nx.draw(G, pos, with_labels=True)
-    
-    edge_labels = nx.get_edge_attributes(G, 'product')
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_weight='bold')
+def tree_layout(G):
+    # Create a copy of the graph so we don't modify the original
+    H = copy.deepcopy(G)
 
-    # Show the plot
-    plt.savefig(f"treeImages/{username}.png")
-    return f"treeImages/{username}.png"
+    # Get the edges and nodes of the graph
+    edges = list(H.edges())
+    nodes = list(H.nodes())
 
+    # Create a dictionary to store the position of each node
+    pos = {}
+
+    # Set the position of the root node to (0, 0)
+    root_node = nodes[0]
+    pos[root_node] = (0, 0)
+
+    # Set the position of the children of the root node
+    children = list(H.neighbors(root_node))
+    num_children = len(children)
+    child_positions = [(i - (num_children - 1) / 2, -1) for i in range(num_children)]
+    random.shuffle(child_positions)  # Shuffle the positions to add some randomness
+    for i, child in enumerate(children):
+        pos[child] = child_positions[i]
+
+    # Recursively set the position of the rest of the nodes
+    def set_position(node):
+        nonlocal pos
+        children = list(H.neighbors(node))
+        num_children = len(children)
+        if num_children == 0:
+            return
+        elif num_children == 1:
+            child = children[0]
+            pos[child] = (pos[node][0], pos[node][1] - 1)
+            set_position(child)
+        else:
+            child_positions = [(i - (num_children - 1) / 2, pos[node][1] - 1) for i in range(num_children)]
+            random.shuffle(child_positions)
+            for i, child in enumerate(children):
+                pos[child] = child_positions[i]
+                set_position(child)
+
+    set_position(root_node)
+
+    # Relabel the nodes in the graph with their new positions
+    new_labels = {}
+    for node, position in pos.items():
+        new_label = f"{node} ({position[0]}, {position[1]})"
+        new_labels[node] = new_label
+    H = nx.relabel_nodes(H, new_labels)
+
+    # Return the new graph with the nodes in a tree layout
+    return H
 
 if __name__ == '__main__':
     print(makegraph("Super Home Builder"))
