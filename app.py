@@ -128,6 +128,29 @@ def documents():
 def network():
     return render_template('mynetwork.html')
 
+@app.route('/search')
+@login_required
+def search():
+    return render_template('search.html')
+
+@app.route('/results',methods=['POST'])
+@login_required
+def results():
+    query = request.form['query']
+    invoices = invoice_db.find({
+    "$or": [
+        { "_id": query },
+        { "seller_name": query },
+        { "buyer_name": query },
+        { "date": query },
+        { "address": query },
+        { "filename": query }
+    ]
+    })
+    return render_template('results.html', results=invoices)
+
+
+
 @app.route('/search_user', methods=['POST'])
 @login_required
 def search_user():
