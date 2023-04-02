@@ -109,6 +109,13 @@ def delete_pdf(file_id):
         print(e)
         return 'Error deleting PDF', 400
 
+@app.route('/sign_up')
+def sign_up():
+    return render_template('sign_up.html')
+  
+@app.route('/log_in')
+def log_in():
+    return render_template('home.html')
 
 @app.route('/documents')
 def documents():

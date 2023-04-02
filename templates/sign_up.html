@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <link rel="stylesheet" href="/static/css/sign_up.css">
+
+    <!-- Padding header dummy -->
+    <div id="dummy"></div>
+
+    <!-- Logo container -->
+    <div class="logo-header">
+        <img src="/static/imgs/Sense_f.svg" alt="SUPLAISENSE" class="logo">
+    </div>
+
+    <div id="page-container">
+        <!-- log in form -->
+        <div class="form-cont">
+            <form id="myForm" name="signup_form">
+                <h3>Create an Account</h3>
+
+                <label for="name">Name</label>
+                <input type="text" placeholder="Jhon Smith" id="this_name" name="name" class="field" required>
+
+                <label for="email">Email</label>
+                <input type="email" placeholder="jhon_smith@something.com" id="username" name="email" class="field" required>
+
+                <label for="password">Password</label>
+                <input type="password" placeholder="Password" id="password" name="password" class="field" required>
+                
+                <p class="error error--hidden"></p>
+
+                <button id="sign-up" type="submit" value="Sign Up" >SIGN UP</button>
+                <div class="line"></div>
+                <a id="log-in" href="/log_in">GO BACK</a>
+            </form>
+        </div>
+
+        <!-- footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2023 SuplaiSense. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+{% endblock %}
